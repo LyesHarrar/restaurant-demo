@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { dishes, deliveryInfo } from "./data";
+import { rollPriceAdjustments, ADJUSTMENT_INTERVAL_MS } from "./pricing";
 import Menu from "./components/Menu";
 import Cart from "./components/Cart";
 import PaymentModal from "./components/PaymentModal";
@@ -9,6 +10,14 @@ export default function App() {
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showPayment, setShowPayment] = useState(false);
+  const [priceAdjustments, setPriceAdjustments] = useState(() => rollPriceAdjustments(dishes));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPriceAdjustments(rollPriceAdjustments(dishes));
+    }, ADJUSTMENT_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, []);
 
   function addToCart(dish) {
     const existing = cart.find((item) => item.id === dish.id);
@@ -55,23 +64,31 @@ export default function App() {
         </div>
       </header>
 
+      <div className="ticker-banner">
+        <span className="ticker-title">📈 Wall Street Food</span>
+        <span className="ticker-subtitle">Prices move every 5 minutes — grab the dips!</span>
+      </div>
+
       <main className="app-main">
         <Menu
           dishes={dishes}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
           onAddToCart={addToCart}
+          priceAdjustments={priceAdjustments}
         />
         <Cart
           cart={cart}
           onRemove={removeFromCart}
           onUpdateQuantity={updateQuantity}
           onCheckout={() => setShowPayment(true)}
+          priceAdjustments={priceAdjustments}
         />
       </main>
       {showPayment && (
         <PaymentModal
           cart={cart}
+          priceAdjustments={priceAdjustments}
           onClose={() => setShowPayment(false)}
           onSuccess={() => { setCart([]); setShowPayment(false); }}
         />

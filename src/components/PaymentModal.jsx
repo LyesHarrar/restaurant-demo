@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
+import { getEffectivePrice } from "../pricing";
 
 function generateOrderNumber() {
   return "DL-" + Math.floor(10000 + Math.random() * 90000);
 }
 
-export default function PaymentModal({ cart, onClose, onSuccess }) {
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+export default function PaymentModal({ cart, priceAdjustments, onClose, onSuccess }) {
+  const subtotal = cart.reduce((sum, item) => {
+    const unitPrice = getEffectivePrice(item.price, priceAdjustments[item.id]);
+    return sum + unitPrice * item.quantity;
+  }, 0);
   const tax = subtotal * 0.2;
   const total = subtotal + tax;
 
@@ -58,14 +62,17 @@ export default function PaymentModal({ cart, onClose, onSuccess }) {
           <div className="modal-step">
             <h2 className="modal-title">Order Summary</h2>
             <ul className="modal-item-list">
-              {cart.map((item, i) => (
-                <li key={i} className="modal-item-row">
-                  <span className="modal-item-emoji">{item.emoji}</span>
-                  <span className="modal-item-name">{item.name}</span>
-                  <span className="modal-item-qty">x{item.quantity}</span>
-                  <span className="modal-item-price">€{(item.price * item.quantity).toFixed(2)}</span>
-                </li>
-              ))}
+              {cart.map((item) => {
+                const unitPrice = getEffectivePrice(item.price, priceAdjustments[item.id]);
+                return (
+                  <li key={item.id} className="modal-item-row">
+                    <span className="modal-item-emoji">{item.emoji}</span>
+                    <span className="modal-item-name">{item.name}</span>
+                    <span className="modal-item-qty">x{item.quantity}</span>
+                    <span className="modal-item-price">€{(unitPrice * item.quantity).toFixed(2)}</span>
+                  </li>
+                );
+              })}
             </ul>
             <div className="modal-totals">
               <div className="modal-totals-row">
@@ -165,14 +172,17 @@ export default function PaymentModal({ cart, onClose, onSuccess }) {
             <h2 className="success-title">Payment Successful!</h2>
             <p className="success-meta">Order {orderNumber} · {formattedTime}</p>
             <ul className="modal-item-list modal-item-list--receipt">
-              {cart.map((item, i) => (
-                <li key={i} className="modal-item-row">
-                  <span className="modal-item-emoji">{item.emoji}</span>
-                  <span className="modal-item-name">{item.name}</span>
-                  <span className="modal-item-qty">x{item.quantity}</span>
-                  <span className="modal-item-price">€{(item.price * item.quantity).toFixed(2)}</span>
-                </li>
-              ))}
+              {cart.map((item) => {
+                const unitPrice = getEffectivePrice(item.price, priceAdjustments[item.id]);
+                return (
+                  <li key={item.id} className="modal-item-row">
+                    <span className="modal-item-emoji">{item.emoji}</span>
+                    <span className="modal-item-name">{item.name}</span>
+                    <span className="modal-item-qty">x{item.quantity}</span>
+                    <span className="modal-item-price">€{(unitPrice * item.quantity).toFixed(2)}</span>
+                  </li>
+                );
+              })}
             </ul>
             <div className="modal-totals">
               <div className="modal-totals-row modal-totals-total">

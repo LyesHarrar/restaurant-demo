@@ -91,6 +91,29 @@ body {
   justify-content: center;
 }
 
+/* ─── Wall Street Food ticker ────────────────────────────── */
+.ticker-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 32px;
+  background: linear-gradient(135deg, #1a271f 0%, #0d1712 100%);
+  color: #ffffff;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.ticker-title {
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.3px;
+  color: #00e6c3;
+}
+
+.ticker-subtitle {
+  color: #b8c4bd;
+}
+
 /* ─── Layout ──────────────────────────────────────────── */
 .app-main {
   display: flex;
@@ -165,6 +188,16 @@ body {
   transform: translateY(-1px);
 }
 
+.dish-card--discount {
+  border-color: #1fae5e;
+  box-shadow: 0 0 0 1px #1fae5e inset;
+}
+
+.dish-card--increase {
+  border-color: #e0393e;
+  box-shadow: 0 0 0 1px #e0393e inset;
+}
+
 .dish-emoji {
   font-size: 2.6rem;
   flex-shrink: 0;
@@ -202,6 +235,26 @@ body {
   font-size: 0.975rem;
   font-weight: 800;
   color: #1a271f;
+}
+
+.price-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  vertical-align: middle;
+}
+
+.price-badge--discount {
+  background: #e5f7ec;
+  color: #1fae5e;
+}
+
+.price-badge--increase {
+  background: #fce9e9;
+  color: #e0393e;
 }
 
 .add-btn {
