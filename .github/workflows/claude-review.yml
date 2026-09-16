@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read          # Read repo files & diff
+      contents: read          # Read repo files & diff (review-only mode)
       pull-requests: write    # Post review comments
       issues: write           # Reply in issue threads
       id-token: write         # OAuth token exchange (Pro/Max auth)
@@ -39,6 +39,12 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
+          # Force tag mode so a tracking comment is created and the review
+          # is actually posted. Without this, supplying a custom `prompt` on
+          # an issue_comment event puts the action in agent mode, which never
+          # creates a comment to deliver the review to.
+          track_progress: true
+
           # --- Authentication (pick ONE) ---
 
           # Option A: Pro/Max subscription (OAuth — no API costs)
@@ -71,6 +77,6 @@ jobs:
 
           # --- Safety guardrails ---
           claude_args: |
-            --max-turns 8
+            --max-turns 20
             --model claude-sonnet-4-6
-            --allowedTools "mcp__github__create_pull_request_review,mcp__github__create_review_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*)"
+            --allowedTools "mcp__github_comment__update_claude_comment,mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),Read,Grep,Glob"
